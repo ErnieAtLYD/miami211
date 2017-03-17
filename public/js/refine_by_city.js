@@ -2,13 +2,15 @@ $(document).on("ready", function(){
     
     let refine_by = []
     
-    // Reset all
+    // Reset all checkboxes
     function resetBoxes(){
         $(".each-result").show()
+        $(".each-result").trigger("marker:show")
+        $(".each-result").trigger("distance:display");
         $(".form-check-input").attr("checked", false)
     }
     
-    // When a 'Refine by' box is checked...
+    // When a 'Refine by City' box is checked...
     $(".form-check-input").click(function(){ 
         addRefine($(this).val())
         showRefined()
@@ -16,7 +18,7 @@ $(document).on("ready", function(){
     
     // Add its value to refine_by (or remove if present)
     function addRefine(x){
-        if ($.inArray(x, refine_by) == -1){
+        if ($.inArray(x, refine_by) === -1){
             refine_by.push($.trim(x))
         }
         else {
@@ -31,13 +33,18 @@ $(document).on("ready", function(){
         $(".each-result").each(function(){
             let this_city = $.trim($(this).attr("data-city"))
             let this_zip = $.trim($(this).attr("data-zip"))
-            if (refine_by.length == 0){
-                $(this).show()
+            if (refine_by.length === 0){
+                $(this).show();
+                $(this).trigger("marker:show")
+                $(this).trigger("distance:display")
                 count++
-            } else if (($.inArray(this_city, refine_by) == -1) && ($.inArray(this_zip, refine_by) == -1)){
-                $(this).hide()
+            } else if (($.inArray(this_city, refine_by) === -1) && ($.inArray(this_zip, refine_by) === -1)){
+                $(this).hide();
+                $(this).trigger("marker:hide")
             } else {
-                $(this).show()
+                $(this).show();
+                $(this).trigger("marker:show")
+                $(this).trigger("distance:display");
                 count++
             }
         })
@@ -47,13 +54,17 @@ $(document).on("ready", function(){
     // Update #number-results
     function numberResults(count){
         let word = " results"
-        if (count == 1){
+        if (count === 1){
             word = " result"
         }
         $("#number-results").text(count + word)
     }
     
+    // Collapse descriptions by default
+    $(".each-result").click(function(){
+        $(this).find(".full-description").toggleClass("collapsed");
+        $(this).toggleClass("expanded");
+    });
+    
     resetBoxes()
 })
-
-
